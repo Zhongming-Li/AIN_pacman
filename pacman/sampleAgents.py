@@ -85,6 +85,9 @@ class SensingAgent(Agent):
         # Demonstrates the information that Pacman can access about the state
         # of the game.
 
+        # TEMP:
+        print "State: ",  state
+
         # What are the current moves available
         legal = api.legalActions(state)
         print "Legal moves: ", legal
@@ -139,12 +142,62 @@ class GoWestAgent(Agent):
             return api.makeMove(pick, legal)
 
 
+# HungryAgent (Practical 01)
+# Try to move towards the nearest food
+class HungryAgent(Agent):
+
+    explored = []
+    stack = []
+
+    def getAction(self, state):
+        # Get the actions we can try, and remove "STOP" if that is one of them.
+        legal = api.legalActions(state)
+        if Directions.STOP in legal:
+            legal.remove(Directions.STOP)
+
+        foods = api.food(state)
+        pacman = api.whereAmI(state)
+
+        explored.append(pacman)
+
+        x_pacman = pacman[0]
+        y_pacman = pacman[1]
+        if Directions.WEST in legal:
+            w = (x_pacman-1, y_pacman)
+            if w in foods:
+                return api.makeMove(Directions.WEST, legal)
+            else:
+                if not (w in explored):
+                    stack.append(w)
+        if Directions.EAST in legal:
+            e = (x_pacman+1, y_pacman)
+            if e in foods:
+                return api.makeMove(Directions.EAST, legal)
+            else:
+                if not (e in explored):
+                    stack.append(e)
+        if Directions.NORTH in legal:
+            n = (x_pacman, y_pacman+1)
+            if n in foods:
+                return api.makeMove(Directions.NORTH, legal)
+            else:
+                if not (n in explored):
+                    stack.append(n)
+        if Directions.SOUTH in legal:
+            s = (x_pacman, y_pacman-1)
+            if s in foods:
+                return api.makeMove(Directions.SOUTH, legal)
+            else:
+                if not (s in explored):
+                    stack.append(s)
+
+        for q in stack:
+            getAction
+
+
 # Practical 02
 class CornerSeekingAgent(Agent):
 
-    # Constructor
-    #
-    # Create a variable to hold the last action
     def __init__(self):
          self.BL = False # Bottom Left
          self.TL = False # Top Left
